@@ -38,52 +38,58 @@ $(function () {
 			6: 60,
 			7: 70,
 			8: 80,
-			9: 90
+			9: 90,
+			10: 100,
+			11: 110,
+			12: 120,
+			13: 130,
+			14: 140,
+			15: 150,
+			16: 160,
+			17: 170,
+			18: 180,
+			19: 190,
+			20: 200
 		};
 
-		var _costSoap = {
-			1: 60,
-			10: 40,
-			20: 30,
-			100: 26
-		};
-
-		var _costSerum = {
-			1: 390,
-			3: 300,
-			5: 290
-		};
-
-		var _costLotion = {
-			1: 350,
-			4: 252
-		};
-
-		var _costMorosil = {
-			1: 290,
-			3: 250,
-			5: 198
-		};
-
-		var _costChoco = {
-			1: 290,
-			3: 250,
-			5: 198
-		};
-
-		var _costFiber = {
-			1: 450,
-			5: 360
-		};
-
-		var _costCoffee = {
-			1: 250,
-			5: 200
-		};
-
-		var _costGluta = {
-			1: 650,
-			4: 500
+		var _cost = {
+			'soap': {
+				1: 60,
+				10: 40,
+				20: 30,
+				100: 26
+			},
+			'serum': {
+				1: 390,
+				3: 300,
+				5: 290
+			},
+			'lotion': {
+				1: 350,
+				4: 247.5
+			},
+			'morosil': {
+				1: 290,
+				3: 250,
+				5: 198
+			},
+			'choco': {
+				1: 290,
+				3: 250,
+				5: 198
+			},
+			'fiber': {
+				1: 450,
+				5: 360
+			},
+			'coffee': {
+				1: 250,
+				5: 200
+			},
+			'gluta': {
+				1: 650,
+				4: 500
+			}
 		};
 
 		var _freeShipping = {
@@ -97,20 +103,20 @@ $(function () {
 			'gluta': []
 		};
 
-		function _getPrice(num, cost) {
+		function _getPrice(qty, cost) {
 
-			var price;
+			var price = 0;
 			var beforeKey;
 			var total = 0;
 
-			if (num > 0) {
+			if (qty > 0) {
 
 				$.each(cost, function (key, value) {
 
-					if (num < key) {
+					if (qty < key) {
 						price = cost[beforeKey];
 						return false;
-					} else if (num == key) {
+					} else if (qty == key) {
 						price = value;
 						return false;
 					}
@@ -119,7 +125,11 @@ $(function () {
 
 				});
 
-				total = (num * price);
+				if (price == 0) {
+					price = cost[beforeKey];
+				}
+
+				total = parseInt(qty * price);
 
 			}
 
@@ -215,18 +225,7 @@ $(function () {
 
 		function getCost() {
 
-			var totalPrice = 0;
 			var soapQty = 0;
-			var soapPrice = 0;
-			var serumPrice = 0;
-			var morosilPrice = 0;
-			var lotionPrice = 0;
-			var chocoPrice = 0;
-			var fiberPrice = 0;
-			var coffeePrice = 0;
-			var glutaPrice = 0;
-			var shippingFees = 0;
-			var promotionPrice = 0;
 			var cost = {};
 
 			_product.soap_white = parseInt($.trim($('#txtSoapWhite').val()).length > 0 ? $('#txtSoapWhite').val() : 0);
@@ -241,34 +240,27 @@ $(function () {
 
 			soapQty = _product.soap_red + _product.soap_white;
 
-			promotionPrice = _getPromotionPrice();
+			// cost.promotion_price = _getPromotionPrice();
 
-			if (promotionPrice == 0) {
+			cost.soap_price = _getPrice(soapQty, _cost.soap);
+			cost.serum_price = _getPrice(_product.serum, _cost.serum);
+			cost.morosil_price = _getPrice(_product.morosil, _cost.morosil);
+			cost.lotion_price = _getPrice(_product.lotion, _cost.lotion);
+			cost.choco_price = _getPrice(_product.choco, _cost.choco);
+			cost.fiber_price = _getPrice(_product.fiber, _cost.fiber);
+			cost.coffee_price = _getPrice(_product.coffee, _cost.coffee);
+			cost.gluta_price = _getPrice(_product.gluta, _cost.gluta);
+			cost.shipping_fees = _getShippingFees();
+			cost.shipping_fees = Math.round(cost.shipping_fees / 10) * 10;
 
-				soapPrice = _getPrice(soapQty, _costSoap);
-				serumPrice = _getPrice(_product.serum, _costSerum);
-				morosilPrice = _getPrice(_product.morosil, _costMorosil);
-				lotionPrice = _getPrice(_product.lotion, _costLotion);
-				chocoPrice = _getPrice(_product.choco, _costChoco);
-				fiberPrice = _getPrice(_product.fiber, _costFiber);
-				coffeePrice = _getPrice(_product.coffee, _costCoffee);
-				glutaPrice = _getPrice(_product.gluta, _costGluta);
-				shippingFees = _getShippingFees();
-				shippingFees = Math.round(shippingFees / 10) * 10;
+			cost.total_price = cost.soap_price + cost.serum_price + cost.morosil_price + cost.lotion_price + cost.choco_price + cost.fiber_price + cost.coffee_price + cost.gluta_price;
 
-			}
-			
-			cost.shipping_fees = shippingFees;
-
-			cost.total_price = promotionPrice + soapPrice + serumPrice + morosilPrice + lotionPrice + chocoPrice + fiberPrice + coffeePrice + glutaPrice;
-
-			cost.total_amount = cost.total_price + cost.shipping_fees;			
+			cost.total_amount = cost.total_price + cost.shipping_fees;
 			cost.shipping_fees_cod = (cost.total_amount * _codRate) + cost.shipping_fees;
-			cost.shipping_fees_cod = Math.round(cost.shipping_fees_cod / 10) * 10;		
+			cost.shipping_fees_cod = Math.round(cost.shipping_fees_cod / 10) * 10;
 
-			cost.total_amount_cod  = cost.total_price + cost.shipping_fees_cod;
-			cost.total_amount_cod  = Math.round(cost.total_amount_cod / 10) * 10;
-			
+			cost.total_amount_cod = cost.total_price + cost.shipping_fees_cod;
+			cost.total_amount_cod = Math.round(cost.total_amount_cod / 10) * 10;
 
 			return cost;
 
@@ -276,62 +268,87 @@ $(function () {
 
 		function _setDetail() {
 
-			var label = '';
-			var cost = getCost();
+			var labelProductPrice = '';
+			var cost = {};
+			var soap = 0;
+			var cod = false;
+			var shippingFees = 0;
 
-			if (_product.soap_white > 0) {
-				label += "- สบู่ขาว " + _product.soap_white + '<br>';
-			}
+			cost = getCost();
+			cod = $('#chkCod').is(':checked');
 
-			if (_product.soap_red > 0) {
-				label += "- สบู่แดง " + _product.soap_red + '<br>';
+			soap = _product.soap_white + _product.soap_red;
+
+			if (_product.soap_white > 0 || _product.soap_red > 0) {
+				labelProductPrice += '- สบู่ ' + soap + ' ก้อน ' + cost.soap_price.toLocaleString() + ' บาท<br>';
 			}
 
 			if (_product.serum > 0) {
-				label += "- เซรั่ม " + _product.serum + '<br>';
+				labelProductPrice += '- เซรั่ม ' + _product.serum + ' ขวด ' + cost.serum_price.toLocaleString() + ' บาท<br>';
 			}
 
 			if (_product.lotion > 0) {
-				label += "- โลชั่น " + _product.lotion + '<br>';
+				labelProductPrice += '- โลชั่น ' + _product.lotion + ' กล่อง ' + cost.lotion_price.toLocaleString() + ' บาท<br>';
 			}
 
 			if (_product.morosil > 0) {
-				label += "- โมโรซิว " + _product.morosil + '<br>';
+				labelProductPrice += '- โมโรซิว ' + _product.morosil + ' กล่อง ' + cost.morosil_price.toLocaleString() + ' บาท<br>';
 			}
 
 			if (_product.choco > 0) {
-				label += "- ช๊อคโก้ " + _product.choco + '<br>';
+				labelProductPrice += '- ช๊อคโก้ ' + _product.choco + ' กล่อง ' + cost.choco_price.toLocaleString() + ' บาท<br>';
 			}
 
 			if (_product.coffee > 0) {
-				label += "- กาแฟ " + _product.coffee + '<br>';
+				labelProductPrice += '- กาแฟ ' + _product.coffee + ' กล่อง ' + cost.coffee_price.toLocaleString() + ' บาท<br>';
 			}
 
 			if (_product.fiber > 0) {
-				label += "- ไฟเบอร์ " + _product.fiber + '<br>';
+				labelProductPrice += '- ไฟเบอร์ ' + _product.fiber + ' กล่อง ' + cost.fiber_price.toLocaleString() + ' บาท<br>';
 			}
 
 			if (_product.gluta > 0) {
-				label += "- กรูตร้า " + _product.gluta + '<br>';
+				labelProductPrice += '- กรูตร้า ' + _product.gluta + ' กล่อง ' + cost.gluta_price.toLocaleString() + ' บาท<br>';
 			}
 
-			if ($('#chkCod').is(':checked')) {
-				label += "- เก็บเงินปลายทาง " + cost.total_amount_cod.toLocaleString() + " บาท<br>";
+			if (cost.total_price > 0) {
+				labelProductPrice += '<br><b>รวมทั้งหมด</b> ' + cost.total_price.toLocaleString() + ' บาท<br>';
 			}
 
-			label += "<br>ผู้รับ...";
+			if (cost.total_amount > 0) {
 
-			$("#lblProductDetail").html(label);
-			$('#lblPrice').text(cost.total_price.toLocaleString());
+				if (cod) {
+					shippingFees = cost.shipping_fees_cod;
+				} else {
+					shippingFees = cost.shipping_fees;
+				}
+
+				if (shippingFees > 0) {
+					labelProductPrice += '<b>ค่าจัดส่ง</b> ' + shippingFees.toLocaleString() + ' บาท<br>';
+				} else {
+					labelProductPrice += '<b>จัดส่งฟรี</b><br>';
+				}
+
+				labelProductPrice += '--------------------------' + '<br>';
+				labelProductPrice += '<b>โอนเงินรวมค่าจัดส่ง </b> ' + cost.total_amount.toLocaleString() + ' บาท<br>';
+				labelProductPrice += '<b>เก็บเงินปลายทาง </b> ' + cost.total_amount_cod.toLocaleString() + ' บาท<br>';
+
+			}
+
+			// if ($('#chkCod').is(':checked')) {
+			// 	// label += "- เก็บเงินปลายทาง " + cost.total_amount_cod.toLocaleString() + " บาท<br>";
+			// }
+
+			// label += "<br>ผู้รับ...";
+
+			// $("#lblProductDetail").html(label);
+			$("#lblProductPrice").html(labelProductPrice);
 
 			if ($('#chkCod').is(':checked')) {
 				$('#lblShippingFees').text(cost.shipping_fees_cod.toLocaleString());
-			}else{
+			} else {
 				$('#lblShippingFees').text(cost.shipping_fees.toLocaleString());
 			}
-			
-			$('#lblTotalAmount').text(cost.total_amount.toLocaleString());
-			$('#lblTotalAmountCod').text(cost.total_amount_cod.toLocaleString());
 
 		}
 
