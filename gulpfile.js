@@ -81,7 +81,7 @@ function scripts(done) {
 	var scripts = [
 
 		paths.dev + '/js/bootstrap.js',
-		// paths.dev + '/js/jquery.smartmenus.js',
+		
 
 		// paths.dev + '/js/skip-link-focus-fix.js',
 		// Adding currently empty javascript file to add on for your own themes´ customizations

@@ -4206,7 +4206,7 @@ $(function () {
 
 		function _setDetail() {
 
-			var labelProductPrice = '';
+			var labelPrice = '';
 			var labelOrder = '';
 			var cost = {};
 			var soap = 0;
@@ -4219,7 +4219,7 @@ $(function () {
 			soap = _product.soap_white + _product.soap_red;
 
 			if (_product.soap_white > 0 || _product.soap_red > 0) {
-				labelProductPrice += '- สบู่ ' + soap + ' ก้อน ' + cost.soap_price.toLocaleString() + ' บาท<br>';
+				labelPrice += '- สบู่ ' + soap + ' ก้อน ' + cost.soap_price.toLocaleString() + ' บาท\n';
 				if (_product.soap_white > 0) {
 					labelOrder += '- สบู่ขาว ' + _product.soap_white + ' ก้อน\n';
 				}
@@ -4229,42 +4229,42 @@ $(function () {
 			}
 
 			if (_product.serum > 0) {
-				labelProductPrice += '- เซรั่ม ' + _product.serum + ' ขวด ' + cost.serum_price.toLocaleString() + ' บาท<br>';
+				labelPrice += '- เซรั่ม ' + _product.serum + ' ขวด ' + cost.serum_price.toLocaleString() + ' บาท\n';
 				labelOrder += '- เซรั่ม ' + _product.serum + ' ขวด\n';
 			}
 
 			if (_product.lotion > 0) {
-				labelProductPrice += '- โลชั่น ' + _product.lotion + ' กล่อง ' + cost.lotion_price.toLocaleString() + ' บาท<br>';
+				labelPrice += '- โลชั่น ' + _product.lotion + ' กล่อง ' + cost.lotion_price.toLocaleString() + ' บาท\n';
 				labelOrder += '- โลชั่น ' + _product.lotion + ' กล่อง\n';
 			}
 
 			if (_product.morosil > 0) {
-				labelProductPrice += '- โมโรซิว ' + _product.morosil + ' กล่อง ' + cost.morosil_price.toLocaleString() + ' บาท<br>';
+				labelPrice += '- โมโรซิว ' + _product.morosil + ' กล่อง ' + cost.morosil_price.toLocaleString() + ' บาท\n';
 				labelOrder += '- โมโรซิว ' + _product.morosil + ' กล่อง\n';
 			}
 
 			if (_product.choco > 0) {
-				labelProductPrice += '- ช๊อคโก้ ' + _product.choco + ' กล่อง ' + cost.choco_price.toLocaleString() + ' บาท<br>';
+				labelPrice += '- ช๊อคโก้ ' + _product.choco + ' กล่อง ' + cost.choco_price.toLocaleString() + ' บาท\n';
 				labelOrder += '- ช๊อคโก้ ' + _product.choco + ' กล่อง\n';
 			}
 
 			if (_product.coffee > 0) {
-				labelProductPrice += '- กาแฟ ' + _product.coffee + ' กล่อง ' + cost.coffee_price.toLocaleString() + ' บาท<br>';
+				labelPrice += '- กาแฟ ' + _product.coffee + ' กล่อง ' + cost.coffee_price.toLocaleString() + ' บาท\n';
 				labelOrder += '- กาแฟ ' + _product.coffee + ' กล่อง\n';
 			}
 
 			if (_product.fiber > 0) {
-				labelProductPrice += '- ไฟเบอร์ ' + _product.fiber + ' กล่อง ' + cost.fiber_price.toLocaleString() + ' บาท<br>';
+				labelPrice += '- ไฟเบอร์ ' + _product.fiber + ' กล่อง ' + cost.fiber_price.toLocaleString() + ' บาท\n';
 				labelOrder += '- ไฟเบอร์ ' + _product.fiber + ' กล่อง\n';
 			}
 
 			if (_product.gluta > 0) {
-				labelProductPrice += '- กรูตร้า ' + _product.gluta + ' กล่อง ' + cost.gluta_price.toLocaleString() + ' บาท<br>';
+				labelPrice += '- กรูตร้า ' + _product.gluta + ' กล่อง ' + cost.gluta_price.toLocaleString() + ' บาท\n';
 				labelOrder += '- กรูตร้า ' + _product.gluta + ' กล่อง\n';
 			}
 
 			if (cost.total_price > 0) {
-				labelProductPrice += '<br><b>รวมทั้งหมด</b> ' + cost.total_price.toLocaleString() + ' บาท<br>';
+				labelPrice += '\nรวมทั้งหมด ' + cost.total_price.toLocaleString() + ' บาท\n';
 			}
 
 			if (cost.total_amount > 0) {
@@ -4276,46 +4276,39 @@ $(function () {
 				}
 
 				if (shippingFees > 0) {
-					labelProductPrice += '<b>ค่าจัดส่ง</b> ' + shippingFees.toLocaleString() + ' บาท<br>';
+					labelPrice += 'ค่าจัดส่ง ' + shippingFees.toLocaleString() + ' บาท\n';
 				} else {
-					labelProductPrice += '<b>จัดส่งฟรี</b><br>';
+					labelPrice += 'จัดส่งฟรี\n';
 				}
 
-				labelProductPrice += '--------------------------' + '<br>';
-				labelProductPrice += '<b>โอนเงินรวมค่าจัดส่ง </b> ' + cost.total_amount.toLocaleString() + ' บาท<br>';
-				labelProductPrice += '<b>เก็บเงินปลายทาง </b> ' + cost.total_amount_cod.toLocaleString() + ' บาท<br>';
+				labelPrice += '--------------------------' + '\n';
+				labelPrice += 'โอนเงินรวมค่าจัดส่ง ' + cost.total_amount.toLocaleString() + ' บาท\n';
+				labelPrice += 'เก็บเงินปลายทาง ' + cost.total_amount_cod.toLocaleString() + ' บาท\n';
 
 			}
 
 			if (cod) {
-				labelOrder += "\nเก็บเงินปลายทาง " + cost.total_amount_cod.toLocaleString() + " บาท\n";
+				labelOrder += "- เก็บเงินปลายทาง " + cost.total_amount_cod.toLocaleString() + " บาท\n";
 			}
 
 			labelOrder += "\nผู้รับ...";
 
-			$("#lblProductPrice").html(labelProductPrice);
-			$("#txtOrder").html(labelOrder);
-
-			if (cod) {
-				$('#lblShippingFees').text(cost.shipping_fees_cod.toLocaleString());
-			} else {
-				$('#lblShippingFees').text(cost.shipping_fees.toLocaleString());
-			}
+			$("#txtPrice").val(labelPrice);
+			$("#txtOrder").val(labelOrder);
 
 		}
 
 		function _clearDetail() {
 
-			$('#lblPrice').text('0');
-			$('#lblShippingFees').text('0');
-			$('#lblTotalAmount').text('0');
-			$('#lblTotalAmountCod').text('0');
 			$('#chkCod').prop('checked', false);
-			$("#lblProductDetail").text('');
+			$("#txtPrice").val('');
+			$("#txtOrder").val('');
 
 		}
 
 		function init() {
+
+			new ClipboardJS('.btn');
 
 			$("form input").bind("keyup", function () {
 				_setDetail();

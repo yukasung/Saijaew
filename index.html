@@ -15,7 +15,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-12 text-center py-3">
-				<h1 class="h5">Wink White V1.0</h1>
+				<h1 class="h5">Wink White V1.1</h1>
 			</div>
 		</div>
 		<div class="row">
@@ -70,7 +70,7 @@
 						</label>
 					</div>
 					<div class="form-row py-4">
-						<button type="button" class="btn btn-primary" id="btnClear">Clear</button>
+						<button type="button" class="btn btn-primary btn-lg" id="btnClear">Clear</button>
 					</div>
 					<div class="form-row py-4">
 						<div class="col-12">
@@ -87,10 +87,16 @@
 							<div class="tab-content" id="myTabContent">
 								<div class="tab-pane fade show active" id="home" role="tabpanel"
 									aria-labelledby="home-tab">
-									<label id="lblProductPrice"></label>
+									<div class="copy-clipboard">
+										<textarea type="text" id="txtPrice" rows="10" class="w-100"></textarea>
+										<button type="button" class="btn btn-primary btn-lg" data-clipboard-target="#txtPrice">Copy</button>
+									</div>
 								</div>
 								<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-									<textarea type="text" id="txtOrder" rows="10" class="w-100"></textarea>
+									<div class="copy-clipboard">
+										<textarea type="text" id="txtOrder" rows="10" class="w-100"></textarea>
+										<button type="button" class="btn btn-primary btn-lg" data-clipboard-target="#txtOrder">Copy</button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -102,7 +108,9 @@
 	<!-- Optional JavaScript -->
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 	<script src="js/jquery.min.js"></script>
+	<script src="js/clipboard.min.js"></script>
 	<script src="js/main.min.js"></script>
+	
 
 </body>
 
