@@ -279,6 +279,7 @@ $(function () {
 		function _setDetail() {
 
 			var labelProductPrice = '';
+			var labelOrder = '';
 			var cost = {};
 			var soap = 0;
 			var cod = false;
@@ -291,34 +292,47 @@ $(function () {
 
 			if (_product.soap_white > 0 || _product.soap_red > 0) {
 				labelProductPrice += '- สบู่ ' + soap + ' ก้อน ' + cost.soap_price.toLocaleString() + ' บาท<br>';
+				if (_product.soap_white > 0) {
+					labelOrder += '- สบู่ขาว ' + _product.soap_white + ' ก้อน\n';
+				}
+				if (_product.soap_red > 0) {
+					labelOrder += '- สบู่แดง ' + _product.soap_red + ' ก้อน\n';
+				}
 			}
 
 			if (_product.serum > 0) {
 				labelProductPrice += '- เซรั่ม ' + _product.serum + ' ขวด ' + cost.serum_price.toLocaleString() + ' บาท<br>';
+				labelOrder += '- เซรั่ม ' + _product.serum + ' ขวด\n';
 			}
 
 			if (_product.lotion > 0) {
 				labelProductPrice += '- โลชั่น ' + _product.lotion + ' กล่อง ' + cost.lotion_price.toLocaleString() + ' บาท<br>';
+				labelOrder += '- โลชั่น ' + _product.lotion + ' กล่อง\n';
 			}
 
 			if (_product.morosil > 0) {
 				labelProductPrice += '- โมโรซิว ' + _product.morosil + ' กล่อง ' + cost.morosil_price.toLocaleString() + ' บาท<br>';
+				labelOrder += '- โมโรซิว ' + _product.morosil + ' กล่อง\n';
 			}
 
 			if (_product.choco > 0) {
 				labelProductPrice += '- ช๊อคโก้ ' + _product.choco + ' กล่อง ' + cost.choco_price.toLocaleString() + ' บาท<br>';
+				labelOrder += '- ช๊อคโก้ ' + _product.choco + ' กล่อง\n';
 			}
 
 			if (_product.coffee > 0) {
 				labelProductPrice += '- กาแฟ ' + _product.coffee + ' กล่อง ' + cost.coffee_price.toLocaleString() + ' บาท<br>';
+				labelOrder += '- กาแฟ ' + _product.coffee + ' กล่อง\n';
 			}
 
 			if (_product.fiber > 0) {
 				labelProductPrice += '- ไฟเบอร์ ' + _product.fiber + ' กล่อง ' + cost.fiber_price.toLocaleString() + ' บาท<br>';
+				labelOrder += '- ไฟเบอร์ ' + _product.fiber + ' กล่อง\n';
 			}
 
 			if (_product.gluta > 0) {
 				labelProductPrice += '- กรูตร้า ' + _product.gluta + ' กล่อง ' + cost.gluta_price.toLocaleString() + ' บาท<br>';
+				labelOrder += '- กรูตร้า ' + _product.gluta + ' กล่อง\n';
 			}
 
 			if (cost.total_price > 0) {
@@ -345,16 +359,16 @@ $(function () {
 
 			}
 
-			// if ($('#chkCod').is(':checked')) {
-			// 	// label += "- เก็บเงินปลายทาง " + cost.total_amount_cod.toLocaleString() + " บาท<br>";
-			// }
+			if (cod) {
+				labelOrder += "\nเก็บเงินปลายทาง " + cost.total_amount_cod.toLocaleString() + " บาท\n";
+			}
 
-			// label += "<br>ผู้รับ...";
+			labelOrder += "\nผู้รับ...";
 
-			// $("#lblProductDetail").html(label);
 			$("#lblProductPrice").html(labelProductPrice);
+			$("#txtOrder").html(labelOrder);
 
-			if ($('#chkCod').is(':checked')) {
+			if (cod) {
 				$('#lblShippingFees').text(cost.shipping_fees_cod.toLocaleString());
 			} else {
 				$('#lblShippingFees').text(cost.shipping_fees.toLocaleString());
