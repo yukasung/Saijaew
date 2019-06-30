@@ -36,30 +36,25 @@ $(function () {
 			4: 50,
 			5: 55,
 			6: 60,
-			7: 70,
-			8: 80,
-			9: 90,
-			10: 100,
-			11: 110,
-			12: 120,
-			13: 130,
-			14: 140,
-			15: 150,
-			16: 160,
-			17: 170,
-			18: 180,
-			19: 190,
-			20: 200,
-			21: 210,
-			22: 220,
-			23: 230,
-			24: 240,
-			25: 250,
-			26: 260,
-			27: 270,
-			28: 280,
-			29: 290,
-			30: 300
+			7: 75,
+			8: 90,
+			9: 105,
+			10: 120,
+			11: 135,
+			12: 150,
+			13: 165,
+			14: 180,
+			15: 195,
+			16: 210,
+			17: 225,
+			18: 240,
+			19: 255,
+			20: 270,
+			21: 285,
+			22: 300,
+			23: 315,
+			24: 330,
+			25: 345
 		};
 
 		var _cost = {
@@ -67,7 +62,7 @@ $(function () {
 				1: 60,
 				10: 40,
 				20: 30,
-				100: 26
+				100: 28
 			},
 			'serum': {
 				1: 390,
@@ -210,6 +205,9 @@ $(function () {
 
 			});
 
+			console.log(itemWeight);
+			console.log(price);
+
 			return price;
 
 		}
@@ -261,6 +259,7 @@ $(function () {
 			cost.coffee_price = _getPrice(_product.coffee, _cost.coffee);
 			cost.gluta_price = _getPrice(_product.gluta, _cost.gluta);
 			cost.shipping_fees = _getShippingFees();
+			console.log(cost.shipping_fees);
 			cost.shipping_fees = Math.round(cost.shipping_fees / 10) * 10;
 
 			cost.total_price = cost.soap_price + cost.serum_price + cost.morosil_price + cost.lotion_price + cost.choco_price + cost.fiber_price + cost.coffee_price + cost.gluta_price;

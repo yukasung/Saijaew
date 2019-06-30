@@ -14,6 +14,7 @@
 		"img": "./img",
 		"imgsrc": "./src/img",
 		"sass": "./sass",
+		"docs": "./docs",
 		"node": "./node_modules/",
 		"bower": "./bower_components/",
 		"dev": "./src",
