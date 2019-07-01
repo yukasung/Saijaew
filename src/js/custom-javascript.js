@@ -230,10 +230,12 @@ $(function () {
 			var promotion = true;
 
 			$.each(_product, function (key, value) {
-				productQty += value;
+				if(key!="soap_qty"){
+					productQty += value;
+				}
 			});
 
-
+			
 			if ((_product.soap_qty == 2 && _product.lotion == 1) && productQty == 3) {
 				cost.shipping_fees = 0;
 				cost.total_price = 500;
