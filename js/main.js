@@ -4073,12 +4073,10 @@ $(function () {
 		function _getShippingFees() {
 
 			var price = 0;
-			var soapQty = 0;
 			var itemWeight = 0;
 
 			// Soap
-			soapQty = _product.soap_red + _product.soap_white;
-			if ($.inArray(soapQty, _freeShipping.soap) == -1) {
+			if ($.inArray(_product.soap_qty, _freeShipping.soap) == -1) {
 
 				if (_product.soap_red > 0) {
 					itemWeight += _product.soap_red * _weight.soap_red;
@@ -4133,35 +4131,78 @@ $(function () {
 
 			});
 
-			console.log(itemWeight);
-			console.log(price);
-
 			return price;
 
 		}
 
-		function _getPromotionPrice() {
+		function _freeGif(cost) {
 
-			var soapQty = 0;
-			var price = 0;
+			var gift = {};
+			var bag = 0;
 
-			soapQty = _product.soap_red + _product.soap_white;
+			gift.mask = _product.serum;
+			bag = _product.soap_qty / 5;
+			bag = Math.floor(bag);
 
-			if (soapQty == 2 && _product.lotion == 1) {
-				price = 500;
-			} else if (soapQty == 20 && _product.lotion == 1) {
-				price = 990;
-			} else if (_product.soap_red == 1 && _product.serum == 1) {
-				price = 450;
+			gift.bag = bag;
+
+			cost.gift = gift;
+
+			return cost;
+
+		}
+
+		function _checkPromotionPrice(cost) {
+
+			var productQty = 0;
+			var promotion = true;
+
+			$.each(_product, function (key, value) {
+				productQty += value;
+			});
+
+
+			if ((_product.soap_qty == 2 && _product.lotion == 1) && productQty == 3) {
+				cost.shipping_fees = 0;
+				cost.total_price = 500;
+				cost.total_amount = cost.total_price;
+				cost.total_amount_cod = cost.total_price + 20;
+			} else if ((_product.soap_qty == 20 && _product.lotion == 1) && productQty == 21) {
+				cost.shipping_fees = 0;
+				cost.total_price = 990;
+				cost.total_amount = cost.total_price;
+				cost.total_amount_cod = cost.total_price + 40;
+			} else if ((_product.soap_qty == 1 && _product.serum == 1) && productQty == 2) {
+				cost.shipping_fees = 0;
+				cost.total_price = 450;
+				cost.total_amount = cost.total_price;
+				cost.total_amount_cod = cost.total_price + 20;
+			} else if ((_product.soap_qty == 10 && _product.serum == 3) && productQty == 13) {
+				cost.shipping_fees = 0;
+				cost.total_price = 1300;
+				cost.total_amount = cost.total_price;
+				cost.total_amount_cod = cost.total_price + 50;
+			} else if (((_product.choco + _product.morosil) == 5) && productQty == 5) {
+				cost.shipping_fees = 60;
+				cost.total_price = 990;
+				cost.total_amount = cost.total_price + cost.shipping_fees;
+				cost.total_amount_cod = cost.total_amount + 50;
+			} else {
+				promotion = false;
 			}
 
-			return price;
+			cost.set_promotion = promotion;
+
+			return cost;
 
 		}
+
+
+
 
 		function getCost() {
 
-			var soapQty = 0;
+			var differanceTotalAmount = 0;
 			var cost = {};
 
 			_product.soap_white = parseInt($.trim($('#txtSoapWhite').val()).length > 0 ? $('#txtSoapWhite').val() : 0);
@@ -4173,12 +4214,9 @@ $(function () {
 			_product.choco = parseInt($.trim($('#txtChoco').val()).length > 0 ? $('#txtChoco').val() : 0);
 			_product.coffee = parseInt($.trim($('#txtCoffee').val()).length > 0 ? $('#txtCoffee').val() : 0);
 			_product.gluta = parseInt($.trim($('#txtGluta').val()).length > 0 ? $('#txtGluta').val() : 0);
+			_product.soap_qty = _product.soap_red + _product.soap_white;
 
-			soapQty = _product.soap_red + _product.soap_white;
-
-			// cost.promotion_price = _getPromotionPrice();
-
-			cost.soap_price = _getPrice(soapQty, _cost.soap);
+			cost.soap_price = _getPrice(_product.soap_qty, _cost.soap);
 			cost.serum_price = _getPrice(_product.serum, _cost.serum);
 			cost.morosil_price = _getPrice(_product.morosil, _cost.morosil);
 			cost.lotion_price = _getPrice(_product.lotion, _cost.lotion);
@@ -4187,7 +4225,6 @@ $(function () {
 			cost.coffee_price = _getPrice(_product.coffee, _cost.coffee);
 			cost.gluta_price = _getPrice(_product.gluta, _cost.gluta);
 			cost.shipping_fees = _getShippingFees();
-			console.log(cost.shipping_fees);
 			cost.shipping_fees = Math.round(cost.shipping_fees / 10) * 10;
 
 			cost.total_price = cost.soap_price + cost.serum_price + cost.morosil_price + cost.lotion_price + cost.choco_price + cost.fiber_price + cost.coffee_price + cost.gluta_price;
@@ -4198,6 +4235,14 @@ $(function () {
 
 			cost.total_amount_cod = cost.total_price + cost.shipping_fees_cod;
 			cost.total_amount_cod = Math.round(cost.total_amount_cod / 10) * 10;
+
+			differanceTotalAmount = cost.total_amount_cod - cost.total_amount;
+			if (differanceTotalAmount < 11) {
+				cost.total_amount_cod = cost.total_amount + 20;
+			}
+
+			cost = _checkPromotionPrice(cost);
+			cost = _freeGif(cost);
 
 			return cost;
 
@@ -4262,8 +4307,24 @@ $(function () {
 				labelOrder += '- กรูตร้า ' + _product.gluta + ' กล่อง\n';
 			}
 
-			if (cost.total_price > 0) {
-				labelPrice += '\nรวมทั้งหมด ' + cost.total_price.toLocaleString() + ' บาท\n';
+			if (cost.gift.mask > 0) {
+				var lblMask = "- มาร์คหน้า " + cost.gift.mask + " ชิ้น (ฟรี)\n";
+				labelPrice += lblMask;
+				labelOrder += lblMask;
+			}
+
+			if (cost.gift.bag > 0) {
+				var lblBag = "- ตาข่ายตีฟอง " + cost.gift.bag + " ชิ้น (ฟรี)\n";
+				labelPrice += lblBag;
+				labelOrder += lblBag;
+			}
+
+			if (cost.set_promotion == false) {
+				if (cost.total_price > 0) {
+					labelPrice += '\nรวมทั้งหมด ' + cost.total_price.toLocaleString() + ' บาท\n';
+				}
+			} else {
+				labelPrice += '\nราคาเซ็ทโปรโมชั่น ' + cost.total_price.toLocaleString() + ' บาท\n';
 			}
 
 			if (cost.total_amount > 0) {
