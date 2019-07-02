@@ -3944,8 +3944,8 @@ $(function () {
 		};
 
 		var _weight = {
-			'soap_red': 0.15,
-			'soap_white': 0.15,
+			'soap_red': 0.12,
+			'soap_white': 0.12,
 			'serum': 0.015,
 			'morosil': 0.15,
 			'lotion': 0.3,
