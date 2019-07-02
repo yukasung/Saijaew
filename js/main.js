@@ -4003,13 +4003,19 @@ $(function () {
 			},
 			'morosil': {
 				1: 290,
-				3: 250,
-				5: 198
+				3: 230,
+				5: 198,
+				20: 180,
+				50: 170,
+				100: 160
 			},
 			'choco': {
 				1: 290,
-				3: 250,
-				5: 198
+				3: 230,
+				5: 198,
+				20: 180,
+				50: 170,
+				100: 160
 			},
 			'fiber': {
 				1: 450,
@@ -4158,12 +4164,12 @@ $(function () {
 			var promotion = true;
 
 			$.each(_product, function (key, value) {
-				if(key!="soap_qty"){
+				if (key != "soap_qty") {
 					productQty += value;
 				}
 			});
 
-			
+
 			if ((_product.soap_qty == 2 && _product.lotion == 1) && productQty == 3) {
 				cost.shipping_fees = 0;
 				cost.total_price = 500;
@@ -4184,6 +4190,19 @@ $(function () {
 				cost.total_price = 1300;
 				cost.total_amount = cost.total_price;
 				cost.total_amount_cod = cost.total_price + 50;
+			} else if (((_product.choco + _product.morosil) == 3) && productQty == 3) {
+				var price = 750;
+				if (_product.morosil == 3) {
+					cost.morosil_price = price;
+				}
+				if (_product.choco == 3) {
+					cost.choco_price = price;
+				}
+
+				cost.shipping_fees = 0;
+				cost.total_price = price;
+				cost.total_amount = cost.total_price;
+				cost.total_amount_cod = cost.total_amount + 30;
 			} else if (((_product.choco + _product.morosil) == 5) && productQty == 5) {
 				cost.shipping_fees = 60;
 				cost.total_price = 990;
@@ -4257,7 +4276,6 @@ $(function () {
 			var cost = {};
 			var soap = 0;
 			var cod = false;
-			var shippingFees = 0;
 
 			cost = getCost();
 			cod = $('#chkCod').is(':checked');
@@ -4331,20 +4349,18 @@ $(function () {
 
 			if (cost.total_amount > 0) {
 
-				if (cod) {
-					shippingFees = cost.shipping_fees_cod;
-				} else {
-					shippingFees = cost.shipping_fees;
-				}
-
-				if (shippingFees > 0) {
-					labelPrice += 'ค่าจัดส่ง ' + shippingFees.toLocaleString() + ' บาท\n';
+				if (cost.shipping_fees > 0) {
+					labelPrice += 'ค่าจัดส่ง ' + cost.shipping_fees.toLocaleString() + ' บาท\n';
 				} else {
 					labelPrice += 'จัดส่งฟรี\n';
 				}
 
 				labelPrice += '--------------------------' + '\n';
-				labelPrice += 'โอนเงินรวมค่าจัดส่ง ' + cost.total_amount.toLocaleString() + ' บาท\n';
+				if (cost.shipping_fees > 0) {
+					labelPrice += 'โอนเงินรวมค่าจัดส่ง ' + cost.total_amount.toLocaleString() + ' บาท\n';
+				} else {
+					labelPrice += 'โอนเงิน ' + cost.total_amount.toLocaleString() + ' บาท\n';
+				}
 				labelPrice += 'เก็บเงินปลายทาง ' + cost.total_amount_cod.toLocaleString() + ' บาท\n';
 
 			}
@@ -4353,7 +4369,7 @@ $(function () {
 				labelOrder += "- เก็บเงินปลายทาง " + cost.total_amount_cod.toLocaleString() + " บาท\n";
 			}
 
-			labelOrder += "\nผู้รับ...";
+			labelOrder += "\nผู้รับ...\n";
 
 			$("#txtPrice").val(labelPrice);
 			$("#txtOrder").val(labelOrder);
