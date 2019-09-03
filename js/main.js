@@ -4038,7 +4038,7 @@ $(function () {
 			'morosil': [3],
 			'choco': [3],
 			'lotion': [2],
-			'fiber': [4, 10],
+			'fiber': [2, 4, 10],
 			'coffee': [],
 			'serum': [],
 			'gluta': []
