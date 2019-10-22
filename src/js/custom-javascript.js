@@ -116,6 +116,12 @@ $(function () {
 			'gluta': []
 		};
 
+		var _keyItems = {
+			'free_shipping': false,
+			'cod': false,
+			'cod_free': false
+		};
+
 		function _getPrice(qty, cost) {
 
 			var price = 0;
@@ -155,61 +161,63 @@ $(function () {
 			var price = 0;
 			var itemWeight = 0;
 
-			// Soap
-			if ($.inArray(_product.soap_qty, _freeShipping.soap) == -1) {
+			if (!_keyItems.free_shipping) {
+				// Soap
+				if ($.inArray(_product.soap_qty, _freeShipping.soap) == -1) {
 
-				if (_product.soap_red > 0) {
-					itemWeight += _product.soap_red * _weight.soap_red;
+					if (_product.soap_red > 0) {
+						itemWeight += _product.soap_red * _weight.soap_red;
+					}
+
+					if (_product.soap_white > 0) {
+						itemWeight += _product.soap_white * _weight.soap_white;
+					}
 				}
 
-				if (_product.soap_white > 0) {
-					itemWeight += _product.soap_white * _weight.soap_white;
-				}
-			}
+				// Morosil
+				if ($.inArray(_product.morosil, _freeShipping.morosil) == -1) {
 
-			// Morosil
-			if ($.inArray(_product.morosil, _freeShipping.morosil) == -1) {
+					itemWeight += (_product.morosil > 0 ? _weight.morosil : 0);
 
-				itemWeight += (_product.morosil > 0 ? _weight.morosil : 0);
-
-			}
-
-			// Choco
-			if ($.inArray(_product.choco, _freeShipping.choco) == -1) {
-
-				itemWeight += (_product.choco > 0 ? _weight.choco : 0);
-
-			}
-
-			// Lotion
-			if ($.inArray(_product.lotion, _freeShipping.lotion) == -1) {
-
-				itemWeight += (_product.lotion > 0 ? _weight.lotion : 0);
-
-			}
-
-			// Fiber
-			if ($.inArray(_product.fiber, _freeShipping.fiber) == -1) {
-
-				itemWeight += (_product.fiber > 0 ? _weight.fiber : 0);
-
-			}
-
-			// Coffee
-			if ($.inArray(_product.coffee, _freeShipping.coffee) == -1) {
-
-				itemWeight += (_product.coffee > 0 ? _weight.coffee : 0);
-
-			}
-
-			$.each(_costShipping, function (key, value) {
-
-				if (itemWeight > 0 && itemWeight <= key) {
-					price = value;
-					return false;
 				}
 
-			});
+				// Choco
+				if ($.inArray(_product.choco, _freeShipping.choco) == -1) {
+
+					itemWeight += (_product.choco > 0 ? _weight.choco : 0);
+
+				}
+
+				// Lotion
+				if ($.inArray(_product.lotion, _freeShipping.lotion) == -1) {
+
+					itemWeight += (_product.lotion > 0 ? _weight.lotion : 0);
+
+				}
+
+				// Fiber
+				if ($.inArray(_product.fiber, _freeShipping.fiber) == -1) {
+
+					itemWeight += (_product.fiber > 0 ? _weight.fiber : 0);
+
+				}
+
+				// Coffee
+				if ($.inArray(_product.coffee, _freeShipping.coffee) == -1) {
+
+					itemWeight += (_product.coffee > 0 ? _weight.coffee : 0);
+
+				}
+
+				$.each(_costShipping, function (key, value) {
+
+					if (itemWeight > 0 && itemWeight <= key) {
+						price = value;
+						return false;
+					}
+
+				});
+			}
 
 			return price;
 
@@ -339,7 +347,19 @@ $(function () {
 			cost = _checkPromotionPrice(cost);
 			cost = _freeGif(cost);
 
+			if (_keyItems.cod_free) {
+				cost.total_amount_cod = cost.total_amount;
+			}
+
 			return cost;
+
+		}
+
+		function _getKeyitems() {
+
+			_keyItems.free_shipping = $('#chkFreeShipping').is(':checked');
+			_keyItems.cod = $('#chkCod').is(':checked');
+			_keyItems.cod_free = $('#chkCodFree').is(':checked');
 
 		}
 
@@ -426,16 +446,19 @@ $(function () {
 				if (cost.shipping_fees > 0) {
 					labelPrice += 'ค่าจัดส่ง ' + cost.shipping_fees.toLocaleString() + ' บาท\n';
 				} else {
-					labelPrice += 'จัดส่งฟรี\n';
+					labelPrice += 'จัดส่งฟรี‼️\n';
 				}
 
-				labelPrice += '--------------------------' + '\n';
-				if (cost.shipping_fees > 0) {
-					labelPrice += 'โอนเงินรวมค่าจัดส่ง ' + cost.total_amount.toLocaleString() + ' บาท\n';
-				} else {
-					labelPrice += 'โอนเงิน ' + cost.total_amount.toLocaleString() + ' บาท\n';
+				if (!_keyItems.cod_free) {
+					labelPrice += '--------------------------' + '\n';
+					if (cost.shipping_fees > 0) {
+						labelPrice += 'โอนเงินรวมค่าจัดส่ง ' + cost.total_amount.toLocaleString() + ' บาท\n';
+					} else {
+						labelPrice += 'โอนเงิน ' + cost.total_amount.toLocaleString() + ' บาท\n';
+					}
+
+					labelPrice += 'เก็บเงินปลายทาง ' + cost.total_amount_cod.toLocaleString() + ' บาท\n';
 				}
-				labelPrice += 'เก็บเงินปลายทาง ' + cost.total_amount_cod.toLocaleString() + ' บาท\n';
 
 			}
 
@@ -452,7 +475,9 @@ $(function () {
 
 		function _clearDetail() {
 
+			$('#chkFreeShipping').prop('checked', false);
 			$('#chkCod').prop('checked', false);
+			$('#chkCodFree').prop('checked', false);
 			$("#txtPrice").val('');
 			$("#txtOrder").val('');
 
@@ -462,17 +487,21 @@ $(function () {
 
 			new ClipboardJS('.btn');
 
+			_getKeyitems();
+
 			$("form input").bind("keyup", function () {
 				_setDetail();
 			});
 
-			$("#chkCod").bind("change", function () {
+			$("#chkCod,#chkFreeShipping,#chkCodFree").bind("change", function () {
+				_getKeyitems();
 				_setDetail();
 			});
 
 			$('#btnClear').bind("click", function () {
 
 				$("form input").val('');
+				_getKeyitems();
 				_setDetail();
 				_clearDetail();
 
