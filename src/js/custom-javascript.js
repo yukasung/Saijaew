@@ -496,10 +496,6 @@ $(function () {
 
 			}
 
-			if (cod) {
-				labelOrder += "- เก็บเงินปลายทาง " + cost.total_amount_cod.toLocaleString() + " บาท\n";
-			}
-
 			if (kimberlite_free_pack > 0) {
 				labelOrder += "- ฟรี " + kimberlite_free_pack.toLocaleString() + " ซอง\n";
 			}
@@ -508,6 +504,10 @@ $(function () {
 				labelOrder += "- ฟรี " + kimberlite_free_glass.toLocaleString() + " แก้ว\n";
 			}
 
+			if (cod) {
+				labelOrder += "- เก็บเงินปลายทาง " + cost.total_amount_cod.toLocaleString() + " บาท\n";
+			}
+			
 			labelOrder += "\nผู้รับ...\n";
 
 			$("#txtPrice").val(labelPrice);
