@@ -63,6 +63,12 @@
 							<input type="number" class="form-control" id="txtGluta" min="0" max="1000">
 						</div>
 					</div>
+					<div class="form-row">
+						<div class="form-group col-4">
+							<label for="txtKimberlite">คิมเบอร์ไลท์</label>
+							<input type="number" class="form-control" id="txtKimberlite" min="0" max="1000">
+						</div>
+					</div>
 					<div class="form-group form-check">
 						<input class="form-check-input" type="checkbox" value="" id="chkFreeShipping">
 						<label class="form-check-label" for="defaultCheck1">
@@ -100,11 +106,21 @@
 									</div>
 								</div>
 								<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-									<div class="form-group form-check">
-										<input class="form-check-input" type="checkbox" value="" id="chkCod">
-										<label class="form-check-label" for="defaultCheck1">
-											เก็บเงินปลายทาง
-										</label>
+									<div class="form-row">
+										<div class="form-group form-check col ml-4">
+											<input class="form-check-input" type="checkbox" value="" id="chkCod">
+											<label class="form-check-label" for="defaultCheck1">
+												เก็บเงินปลายทาง
+											</label>
+										</div>
+										<div class="form-group col">
+											<label for="txtKimberlitePack">คิมเบอร์ไลท์ (ซอง)</label>
+											<input id="txtKimberlitePack" type="text">
+										</div>
+										<div class="form-group col">
+											<label for="txtKimberliteGlass">คิมเบอร์ไลท์ (แก้ว)</label>
+											<input id="txtKimberliteGlass" type="text">
+										</div>
 									</div>
 									<div class="copy-clipboard">
 										<textarea type="text" id="txtOrder" rows="10" class="w-100"></textarea>

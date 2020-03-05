@@ -12,7 +12,8 @@ $(function () {
 			'choco': 0,
 			'fiber': 0,
 			'coffee': 0,
-			'gluta': 0
+			'gluta': 0,
+			'kimberlite': 0
 		};
 
 		var _weight = {
@@ -24,7 +25,8 @@ $(function () {
 			'choco': 0.3,
 			'fiber': 0.07,
 			'coffee': 0.15,
-			'gluta': 0.018
+			'gluta': 0.018,
+			'kimberlite': 0.4
 		};
 
 		var _codRate = 0.04;
@@ -102,6 +104,12 @@ $(function () {
 			'gluta': {
 				1: 650,
 				4: 500
+			},
+			'kimberlite': {
+				1: 899,
+				2: 1699,
+				3: 2499,
+				4: 3299
 			}
 		};
 
@@ -113,7 +121,8 @@ $(function () {
 			'fiber': [2, 4, 10],
 			'coffee': [],
 			'serum': [],
-			'gluta': []
+			'gluta': [],
+			'kimberlite': []
 		};
 
 		var _keyItems = {
@@ -122,7 +131,7 @@ $(function () {
 			'cod_free': false
 		};
 
-		function _getPrice(qty, cost) {
+		function _getPrice(qty, cost, cal_qty) {
 
 			var price = 0;
 			var beforeKey;
@@ -148,7 +157,11 @@ $(function () {
 					price = cost[beforeKey];
 				}
 
-				total = parseInt(qty * price);
+				if(cal_qty){
+					total = parseInt(qty * price);
+				}else{
+					total = price;
+				}
 
 			}
 
@@ -229,6 +242,8 @@ $(function () {
 			var bag = 0;
 
 			gift.mask = _product.serum;
+			gift.kimberlite_pack = _product.kimberlite;
+
 			bag = _product.soap_qty / 5;
 			bag = Math.floor(bag);
 
@@ -301,8 +316,6 @@ $(function () {
 		}
 
 
-
-
 		function getCost() {
 
 			var differanceTotalAmount = 0;
@@ -317,20 +330,23 @@ $(function () {
 			_product.choco = parseInt($.trim($('#txtChoco').val()).length > 0 ? $('#txtChoco').val() : 0);
 			_product.coffee = parseInt($.trim($('#txtCoffee').val()).length > 0 ? $('#txtCoffee').val() : 0);
 			_product.gluta = parseInt($.trim($('#txtGluta').val()).length > 0 ? $('#txtGluta').val() : 0);
+			_product.kimberlite = parseInt($.trim($('#txtKimberlite').val()).length > 0 ? $('#txtKimberlite').val() : 0);
 			_product.soap_qty = _product.soap_red + _product.soap_white;
 
-			cost.soap_price = _getPrice(_product.soap_qty, _cost.soap);
-			cost.serum_price = _getPrice(_product.serum, _cost.serum);
-			cost.morosil_price = _getPrice(_product.morosil, _cost.morosil);
-			cost.lotion_price = _getPrice(_product.lotion, _cost.lotion);
-			cost.choco_price = _getPrice(_product.choco, _cost.choco);
-			cost.fiber_price = _getPrice(_product.fiber, _cost.fiber);
-			cost.coffee_price = _getPrice(_product.coffee, _cost.coffee);
-			cost.gluta_price = _getPrice(_product.gluta, _cost.gluta);
+			cost.soap_price = _getPrice(_product.soap_qty, _cost.soap, true);
+			cost.serum_price = _getPrice(_product.serum, _cost.serum, true);
+			cost.morosil_price = _getPrice(_product.morosil, _cost.morosil, true);
+			cost.lotion_price = _getPrice(_product.lotion, _cost.lotion, true);
+			cost.choco_price = _getPrice(_product.choco, _cost.choco, true);
+			cost.fiber_price = _getPrice(_product.fiber, _cost.fiber, true);
+			cost.coffee_price = _getPrice(_product.coffee, _cost.coffee, true);
+			cost.gluta_price = _getPrice(_product.gluta, _cost.gluta, true);
+			cost.kimberlite_price = _getPrice(_product.kimberlite, _cost.kimberlite, false);
+			
 			cost.shipping_fees = _getShippingFees();
 			cost.shipping_fees = Math.round(cost.shipping_fees / 10) * 10;
 
-			cost.total_price = cost.soap_price + cost.serum_price + cost.morosil_price + cost.lotion_price + cost.choco_price + cost.fiber_price + cost.coffee_price + cost.gluta_price;
+			cost.total_price = cost.soap_price + cost.serum_price + cost.morosil_price + cost.lotion_price + cost.choco_price + cost.fiber_price + cost.coffee_price + cost.gluta_price + cost.kimberlite_price;
 
 			cost.total_amount = cost.total_price + cost.shipping_fees;
 			cost.shipping_fees_cod = (cost.total_amount * _codRate) + cost.shipping_fees;
@@ -370,9 +386,14 @@ $(function () {
 			var cost = {};
 			var soap = 0;
 			var cod = false;
+			var kimberlite_free_pack = 0;
+			var kimberlite_free_glass = 0;
 
 			cost = getCost();
 			cod = $('#chkCod').is(':checked');
+
+			kimberlite_free_pack = $('#txtKimberlitePack').val();
+			kimberlite_free_glass = $('#txtKimberliteGlass').val();
 
 			soap = _product.soap_white + _product.soap_red;
 
@@ -421,6 +442,11 @@ $(function () {
 				labelOrder += '- กรูตร้า ' + _product.gluta + ' กล่อง\n';
 			}
 
+			if (_product.kimberlite > 0) {
+				labelPrice += '- คิมเบอร์ไลท์ ' + _product.kimberlite + ' กล่อง ' + cost.kimberlite_price.toLocaleString() + ' บาท\n';
+				labelOrder += '- คิมเบอร์ไลท์ ' + _product.kimberlite + ' กล่อง\n';
+			}
+
 			if (cost.gift.mask > 0) {
 				var lblMask = "- มาร์คหน้า " + cost.gift.mask + " ชิ้น (ฟรี)\n";
 				labelPrice += lblMask;
@@ -431,6 +457,14 @@ $(function () {
 				var lblBag = "- ตาข่ายตีฟอง " + cost.gift.bag + " ชิ้น (ฟรี)\n";
 				labelPrice += lblBag;
 				labelOrder += lblBag;
+			}
+
+			if (cost.gift.kimberlite_pack > 0) {
+				var lblPack = "- ฟรี " + cost.gift.kimberlite_pack + " ซอง\n";
+				labelPrice += lblPack;
+				if(kimberlite_free_pack == 0){
+					labelOrder += lblPack;
+				}
 			}
 
 			if (cost.set_promotion == false) {
@@ -466,6 +500,14 @@ $(function () {
 				labelOrder += "- เก็บเงินปลายทาง " + cost.total_amount_cod.toLocaleString() + " บาท\n";
 			}
 
+			if (kimberlite_free_pack > 0) {
+				labelOrder += "- ฟรี " + kimberlite_free_pack.toLocaleString() + " ซอง\n";
+			}
+
+			if (kimberlite_free_glass > 0) {
+				labelOrder += "- ฟรี " + kimberlite_free_glass.toLocaleString() + " แก้ว\n";
+			}
+
 			labelOrder += "\nผู้รับ...\n";
 
 			$("#txtPrice").val(labelPrice);
@@ -480,6 +522,7 @@ $(function () {
 			$('#chkCodFree').prop('checked', false);
 			$("#txtPrice").val('');
 			$("#txtOrder").val('');
+			$("#txtKimberlite").val('');
 
 		}
 
@@ -493,7 +536,7 @@ $(function () {
 				_setDetail();
 			});
 
-			$("#chkCod,#chkFreeShipping,#chkCodFree").bind("change", function () {
+			$("#chkCod,#chkFreeShipping,#chkCodFree,#txtKimberlitePack,#txtKimberliteGlass").bind("change", function () {
 				_getKeyitems();
 				_setDetail();
 			});
